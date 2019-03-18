@@ -1,6 +1,7 @@
 let c
 let b_clear
 let answer
+let slider
 function setup() {
     answer = createElement('h2', 'answer will be here!');
     answer.id('textt')
@@ -16,11 +17,16 @@ function setup() {
     b_clear.position(40, 270);
     b_clear.mousePressed(clear_canvas);
 
+    slider = createSlider(0, 40, 20);
+	slider.position(300, 10);
+	slider.style('width', '80px');
+
 }
 function draw() {
     if (mouseIsPressed) {
         fill(0); // Set fill to white
-        ellipse(mouseX, mouseY, 30, 30); // Draw white ellipse using RADIUS mode
+        var val = slider.value();
+        ellipse(mouseX, mouseY, val, val); // Draw white ellipse using RADIUS mode
     
     }
 }
@@ -31,6 +37,7 @@ function clear_canvas(){
 function send_pic() {
 	var canvas = document.getElementById("canvasss");
     var tt = document.getElementById("textt");
+    tt.innerHTML=('updating...');
 	var dataURL = canvas.toDataURL("image/jpeg", 1.0);
 	console.log(dataURL);
 	let postData = {imgURI:  dataURL}

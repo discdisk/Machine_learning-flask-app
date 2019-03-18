@@ -1,15 +1,15 @@
-import os
-os.environ['HDF5_DISABLE_VERSION_CHECK']='2'
-from flask import Flask, render_template ,request
+from flask import Flask, render_template ,request,url_for
 from data import articals
 import base64
 import json
 import numpy as np
-from imageprocess.img_process import preprocess
-from imageprocess.MyChainList_gpu import ocr
+from img_process import preprocess
+from MyChainList_gpu import ocr
+from gen_text import gen_txt
 
 app = Flask(__name__)
 artic=articals()
+gen_t=gen_txt()
 
 @app.route('/')
 def index():
@@ -22,10 +22,10 @@ def p5draw():
 @app.route('/sketch.js')
 def sketch():
     return render_template('/sketch.js')
-@app.route('/gentxt.js')
-def gentxt():
-    return render_template('/gentxt.js')
 
+@app.route('/sketch_text.js')
+def sketch_t():
+    return render_template('/sketch_text.js')
 @app.route('/Link')
 def link():
     return render_template('Link.html')
@@ -45,11 +45,15 @@ def demotext():
     
     print('got it!')
     return(str(ocr(imgData)))
+@app.route('/demot', methods=['POST'])
+def demot():
+    txt=request.get_json()
+    
+    
+    t={'txt':gen_t(txt['input'])}
+    print(t)
+    return json.dumps(t)
 
-@app.route('/gentext', methods=['POST'])
-def gentext():
-    word=request.get_json(force=True)
-    print('got it!',word)
-    return("1")
 if __name__ == '__main__':
-    app.run(debug=True,threaded=True)
+
+    app.run(host='0.0.0.0',port=5000,threaded=True,debug=True)
